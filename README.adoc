@@ -76,6 +76,140 @@ Or via the adapters repository:
 ruby adapter.rb
 ----
 
+== Source Data Format
+
+The processed YAML files in `processed/` follow this structure:
+
+=== Person Entity
+[source,yaml]
+----
+country: Belarus / Bélarus
+last_name: OLEKSINA
+given_name: Inna Vladimirovna
+entity_type: person
+date_of_birth_or_ship_build_date: '1976'
+schedule: 1, Part 1.1
+item: '1'
+date_of_listing: '2022-03-08'
+----
+
+=== Organization Entity
+[source,yaml]
+----
+country: Russia / Russie
+name: EXAMPLE COMPANY LTD
+entity_type: organization
+schedule: 2, Part 1
+item: '50'
+date_of_listing: '2022-03-08'
+----
+
+=== Field Definitions
+
+[cols="1,4"]
+|===
+| Field | Description
+
+| `country`
+| Country/region associated with the sanctions regime
+
+| `last_name` / `given_name`
+| Person name components
+
+| `name`
+| Organization name
+
+| `entity_type`
+| Entity type: person or organization
+
+| `date_of_birth_or_ship_build_date`
+| Birth year or vessel build date
+
+| `schedule`
+| Schedule number in Canadian sanctions regulations
+
+| `item`
+| Item number within the schedule
+
+| `date_of_listing`
+| Date the entity was listed
+
+|===
+
+== Harmonized Data Format
+
+After harmonization, entities are transformed into JSON-LD format:
+
+=== Entity (JSON-LD)
+[source,json]
+----
+{
+  "@context": "https://www.ammitto.org/schema/v1/context.jsonld",
+  "@id": "https://www.ammitto.org/entity/ca/Belarus-1-Part-1-1-1",
+  "@type": "PersonEntity",
+  "names": [
+    {
+      "@type": "NameVariant",
+      "fullName": "Inna Vladimirovna OLEKSINA",
+      "script": "Latn",
+      "isPrimary": true
+    }
+  ],
+  "birthInfo": [
+    {
+      "@type": "BirthInfo",
+      "year": 1976
+    }
+  ],
+  "sanctionEntries": [
+    {
+      "@id": "https://www.ammitto.org/entry/ca/Belarus-1-Part-1-1-1",
+      "@type": "SanctionEntry",
+      "authority": {
+        "@id": "https://www.ammitto.org/authority/ca",
+        "name": "Canada"
+      },
+      "regime": {
+        "@type": "SanctionRegime",
+        "code": "BELARUS",
+        "name": "Belarus"
+      },
+      "status": "active",
+      "period": {
+        "@type": "TemporalPeriod",
+        "listedDate": "2022-03-08"
+      }
+    }
+  ]
+}
+----
+
+=== Canadian Sanctions Schedules
+
+[cols="1,3"]
+|===
+| Schedule | Description
+
+| Schedule 1, Part 1.1
+| Belarus - Individuals
+
+| Schedule 1, Part 2
+| Belarus - Entities
+
+| Schedule 2
+| Russia - Individuals
+
+| Schedule 3
+| Russia - Entities
+
+| Schedule 4
+| Ukraine - Sovereignty
+
+| Schedule 5
+| Other regimes
+
+|===
+
 == YAML Schema
 
 Each processed YAML file follows the schema defined in

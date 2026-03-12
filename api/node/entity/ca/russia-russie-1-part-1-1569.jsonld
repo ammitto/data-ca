@@ -1,0 +1,14 @@
+{
+  "id": "https://www.ammitto.org/entity/ca/russia-russie-1-part-1-1569",
+  "entity_type": "person",
+  "names": [
+    {
+      "full_name": "Olga Nikolaevna SKOROBOGATOVA",
+      "first_name": "Olga Nikolaevna",
+      "last_name": "SKOROBOGATOVA",
+      "is_primary": true
+    }
+  ],
+  "remarks": "Country: Russia / Russie; Schedule: 1, Part 1; Item: 1569; Date of Listing: 2026-02-19",
+  "@context": "https://www.ammitto.org/ontology/context.jsonld"
+}
