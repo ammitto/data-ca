@@ -1,0 +1,69 @@
+{
+  "@context": "https://www.ammitto.org/ontology/context.jsonld",
+  "@type": "Index",
+  "nodes": [
+    {
+      "@id": "https://www.ammitto.org/regime/ca_belarus / bélarus"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_china / chine"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_extremist settler violence / violence extrémiste des colons"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_guatemala"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_haiti / haïti"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_hamas terrorist attacks / attaques terroristes du hamas"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_justice for victims of corrupt foreign officials regulations (jvcfor) / règlement relatif à la justice pour les victimes de dirigeants étrangers corrompus (rjvdec)"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_moldova"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_moldova "
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_myanmar (burma) / myanmar (birmanie)"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_nicaragua"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_russia / russie"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_sema"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_south sudan / soudan du sud"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_sri lanka"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_sudan / soudan"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_syria / syrie"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_venezuela "
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ca_zimbabwe"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/iran"
+    },
+    {
+      "@id": "https://www.ammitto.org/regime/ukraine"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "https://www.ammitto.org/entity/ca/russia-russie-1-part-1-1568",
+  "entity_type": "person",
+  "names": [
+    {
+      "full_name": "Vyacheslav Konstantinovich BARBASOV",
+      "first_name": "Vyacheslav Konstantinovich",
+      "last_name": "BARBASOV",
+      "is_primary": true
+    }
+  ],
+  "remarks": "Country: Russia / Russie; Schedule: 1, Part 1; Item: 1568; Date of Listing: 2026-02-19",
+  "@context": "https://www.ammitto.org/ontology/context.jsonld"
+}

@@ -1,0 +1,28 @@
+{
+  "@context": "https://www.ammitto.org/ontology/context.jsonld",
+  "@type": "Index",
+  "slice": "by-regime",
+  "available": [
+    "https://www.ammitto.org/regime/ attaques terroristes du hamas",
+    "https://www.ammitto.org/regime/ bélarus",
+    "https://www.ammitto.org/regime/ chine",
+    "https://www.ammitto.org/regime/ haïti",
+    "https://www.ammitto.org/regime/ myanmar (birmanie)",
+    "https://www.ammitto.org/regime/ russie",
+    "https://www.ammitto.org/regime/ règlement relatif à la justice pour les victimes de dirigeants étrangers corrompus (rjvdec)",
+    "https://www.ammitto.org/regime/ soudan",
+    "https://www.ammitto.org/regime/ soudan du sud",
+    "https://www.ammitto.org/regime/ syrie",
+    "https://www.ammitto.org/regime/ violence extrémiste des colons",
+    "https://www.ammitto.org/regime/ca_guatemala",
+    "https://www.ammitto.org/regime/ca_moldova",
+    "https://www.ammitto.org/regime/ca_moldova ",
+    "https://www.ammitto.org/regime/ca_nicaragua",
+    "https://www.ammitto.org/regime/ca_sema",
+    "https://www.ammitto.org/regime/ca_sri lanka",
+    "https://www.ammitto.org/regime/ca_venezuela ",
+    "https://www.ammitto.org/regime/ca_zimbabwe",
+    "https://www.ammitto.org/regime/iran",
+    "https://www.ammitto.org/regime/ukraine"
+  ]
+}
