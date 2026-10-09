@@ -1,9 +1,9 @@
 ---
 source: ca
 count: 5707
-fetched_at: '2026-10-08T15:39:10Z'
+fetched_at: '2026-10-09T14:29:06Z'
 schema: ammitto:sources:ca:v1
-pruned: 1
+pruned: 0
 files:
 - ca-Belarus-B-larus-1-Part-1-1-1.yaml
 - ca-Belarus-B-larus-1-Part-1-1-10.yaml
