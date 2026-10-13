@@ -1,249 +1,125 @@
-= Ammitto Canada Sanctions Data Repository
+= Ammitto Canadian sanctions data
 
-== Purpose
+image:https://github.com/ammitto/data-ca/actions/workflows/fetch.yml/badge.svg["Fetch Data", link="https://github.com/ammitto/data-ca/actions/workflows/fetch.yml"]
 
-This repository stores processed sanctions data from
-Global Affairs Canada (GAC) Consolidated Canadian Autonomous Sanctions List.
+This repository stores the Consolidated Canadian Autonomous Sanctions List
+as YAML for Ammitto. Global Affairs Canada publishes the source list;
+`processed/` holds one file per listing.
 
-The data is maintained by the Ammitto project and used by the `ammitto` Ruby
-gem for querying international sanctions information.
+== Source
 
-== Legal Basis
+* Publisher: Global Affairs Canada
+* List page: https://www.international.gc.ca/world-monde/international_relations-relations_internationales/sanctions/consolidated-consolide.aspx?lang=eng
+* File downloaded (XML): https://www.international.gc.ca/world-monde/assets/office_docs/international_relations-relations_internationales/sanctions/sema-lmes.xml
 
-Canadian sanctions are implemented through:
+The list includes individuals and entities subject to sanctions regulations
+made under the Special Economic Measures Act (SEMA) and the Justice for Victims
+of Corrupt Foreign Officials Act (JVCFOA). Global Affairs Canada notes that
+which provisions apply to a listing is set by the regulations it appears in.
 
-* The Special Economic Measures Act (SEMA)
-* The Justice for Victims of Corrupt Foreign Officials Act (Sergei Magnitsky Law)
-* The United Nations Act
-* The Criminal Code (terrorism listings)
-* Various country-specific regulations
+== Contents
 
-Canada implements both UN Security Council sanctions and autonomous
-sanctions regimes.
+`processed/` holds one file per listing, named after the regulations, schedule
+and item number: `processed/ca-Belarus-B-larus-1-Part-1-100.yaml` is item 100
+of schedule 1, part 1 of the Belarus regulations.
 
-== Data Source
+`processed/_index.yaml` lists every file, with the time of the last fetch.
 
-* **Authority**: Global Affairs Canada (GAC)
-* **API Endpoint**: https://www.international.gc.ca/world-monde/assets/office_docs/international_relations-relations_internationales/sanctions/sema-lmes.xml
-* **Format**: XML
-* **Update Frequency**: As changes occur in Canadian sanctions regimes
-* **Official Source**: https://www.international.gc.ca/world-monde/issues_development-enjeux_developpement/response_conflict-reponse_conflits/sanctions/consolidated-consolide.aspx
+Each field is present only when the list gives a value.
 
-== Directory Structure
+[cols="1,1,3"]
+|===
+| Key | Type | Meaning
 
-```
-.
-├── processed/            # Individual YAML files per sanction entity
-│   └── ca-{country}-{schedule}-{item}.yaml
-└── README.adoc           # This file
-```
+| `country` | string | The regulations the listing falls under, as published, usually a country in English and French (`Russia / Russie`), sometimes a theme (`Hamas Terrorist Attacks / Attaques terroristes du Hamas`) or the JVCFOA regulations
+| `last_name` | string | Individuals: family name
+| `given_name` | string | Individuals: given names
+| `entity_or_ship` | string | Entities and ships: the name
+| `date_of_birth_or_ship_build_date` | string | Date of birth of an individual, or build date of a ship
+| `schedule` | string | Schedule and part of the regulations, such as `1, Part 1`
+| `item` | string | Item number within that schedule
+| `date_of_listing` | string | Date the listing was made, `YYYY-MM-DD`
+|===
 
-== Directory Descriptions
+Values are kept as published, including stray spaces, tabs and line breaks;
+trim them before comparing names.
 
-processed/:: Contains individual YAML files, one per sanction entity.
-Files are named `ca-{country}-{schedule}-{item}.yaml` after the
-record's country, schedule and item on the list, for example
-`ca-Iran-1-Part-1-13.yaml`.
+`downloaded/` is empty.
 
-== Updating Data
+== Using the data
 
-Data can be updated using the ammitto gem:
+Clone or download this repository and run either example from its root
+directory.
+
+Ruby:
+
+[source,ruby]
+----
+require "yaml"
+
+Dir.glob("processed/ca-*.yaml").sort.each do |path|
+  record = YAML.safe_load_file(path)
+  name = record["entity_or_ship"] ||
+         [record["given_name"], record["last_name"]].compact.join(" ")
+  name = name.gsub(/[[:space:]]+/, " ").strip
+  puts [record["country"], record["item"], name].join("\t")
+end
+----
+
+Python (requires PyYAML, installed with `python3 -m pip install PyYAML`):
+
+[source,python]
+----
+import glob
+import yaml
+
+for path in sorted(glob.glob("processed/ca-*.yaml")):
+    with open(path, encoding="utf-8") as f:
+        record = yaml.safe_load(f)
+    name = record.get("entity_or_ship") or " ".join(
+        part for part in (record.get("given_name"), record.get("last_name")) if part
+    )
+    name = " ".join(name.split())
+    print(record["country"], record["item"], name, sep="\t")
+----
+
+The same list, harmonized with the other sources into JSON-LD:
+https://www.ammitto.org/api/v1/sources/ca.jsonld
+
+== Updates
+
+The `Fetch Data` workflow (`.github/workflows/fetch.yml`) downloads the list
+every day at 07:30 UTC and commits any change to `processed/`. It runs with
+`--prune`, so a listing Canada has removed is deleted here on the next fetch.
+
+== Development
+
+`processed/` is generated by the Ammitto gem. To refresh it locally, use
+Ruby 3.3 (the version selected by the fetch workflow) and Bundler. From
+the repository root, run:
 
 [source,shell]
 ----
-# From this repository, as .github/workflows/fetch.yml runs it
 bundle install
 bundle exec ammitto fetch ca --format yaml --output-dir processed --verbose --prune
 ----
 
-Or via the adapters repository:
+`--prune` removes files for listings no longer present in the fetched list.
+Review the generated changes before committing them.
 
-[source,shell]
-----
-# From the adapters/ directory
-ruby adapter.rb
-----
-
-== Source Data Format
-
-The processed YAML files in `processed/` follow this structure:
-
-=== Person Entity
-[source,yaml]
-----
-country: Belarus / Bélarus
-last_name: OLEKSINA
-given_name: Inna Vladimirovna
-entity_type: person
-date_of_birth_or_ship_build_date: '1976'
-schedule: 1, Part 1.1
-item: '1'
-date_of_listing: '2022-03-08'
-----
-
-=== Organization Entity
-[source,yaml]
-----
-country: Russia / Russie
-name: EXAMPLE COMPANY LTD
-entity_type: organization
-schedule: 2, Part 1
-item: '50'
-date_of_listing: '2022-03-08'
-----
-
-=== Field Definitions
-
-[cols="1,4"]
-|===
-| Field | Description
-
-| `country`
-| Country/region associated with the sanctions regime
-
-| `last_name` / `given_name`
-| Person name components
-
-| `name`
-| Organization name
-
-| `entity_type`
-| Entity type: person or organization
-
-| `date_of_birth_or_ship_build_date`
-| Birth year or vessel build date
-
-| `schedule`
-| Schedule number in Canadian sanctions regulations
-
-| `item`
-| Item number within the schedule
-
-| `date_of_listing`
-| Date the entity was listed
-
-|===
-
-== Harmonized Data Format
-
-After harmonization, entities are transformed into JSON-LD format:
-
-=== Entity (JSON-LD)
-[source,json]
-----
-{
-  "@context": "https://www.ammitto.org/schema/v1/context.jsonld",
-  "@id": "https://www.ammitto.org/entity/ca/Belarus-1-Part-1-1-1",
-  "@type": "PersonEntity",
-  "names": [
-    {
-      "@type": "NameVariant",
-      "fullName": "Inna Vladimirovna OLEKSINA",
-      "script": "Latn",
-      "isPrimary": true
-    }
-  ],
-  "birthInfo": [
-    {
-      "@type": "BirthInfo",
-      "year": 1976
-    }
-  ],
-  "sanctionEntries": [
-    {
-      "@id": "https://www.ammitto.org/entry/ca/Belarus-1-Part-1-1-1",
-      "@type": "SanctionEntry",
-      "authority": {
-        "@id": "https://www.ammitto.org/authority/ca",
-        "name": "Canada"
-      },
-      "regime": {
-        "@type": "SanctionRegime",
-        "code": "BELARUS",
-        "name": "Belarus"
-      },
-      "status": "active",
-      "period": {
-        "@type": "TemporalPeriod",
-        "listedDate": "2022-03-08"
-      }
-    }
-  ]
-}
-----
-
-=== Canadian Sanctions Schedules
-
-[cols="1,3"]
-|===
-| Schedule | Description
-
-| Schedule 1, Part 1.1
-| Belarus - Individuals
-
-| Schedule 1, Part 2
-| Belarus - Entities
-
-| Schedule 2
-| Russia - Individuals
-
-| Schedule 3
-| Russia - Entities
-
-| Schedule 4
-| Ukraine - Sovereignty
-
-| Schedule 5
-| Other regimes
-
-|===
-
-== YAML Schema
-
-Each processed YAML file follows the schema defined in
-`ammitto/lib/ammitto/sources/ca/` using Lutaml::Model.
-
-.Example YAML structure
-[source,yaml]
-----
-names:
-  - "PRIMARY NAME"
-  - "ALIAS 1"
-entity_type: person  # or "organization"
-source: ca
-country: Country Name
-birthdate: "YYYY-MM-DD"
-identifications:
-  - type: "Passport"
-    number: "XXX123456"
-addresses:
-  - street: "Street Address"
-    city: "City"
-    country: "Country"
-----
-
-== Entity Types
-
-The Canadian sanctions list contains the following entity types:
-
-Person:: Individual persons subject to sanctions
-Organization:: Legal entities, companies, and organizations
-
-== Knowledge Graph Integration
-
-This repository's processed YAML data feeds into the Ammitto knowledge graph.
-
-Harmonized JSON-LD for this source:
-https://www.ammitto.org/api/v1/sources/ca.jsonld
-
-== Related Repositories
-
-* https://github.com/ammitto/ammitto[ammitto] - Main Ruby gem with harmonization
-* https://github.com/ammitto/data[data] - Harmonized knowledge graph output
-* https://github.com/ammitto/ammitto.github.io[ammitto.github.io] - Website with search
+Fetch and parser changes belong in the
+https://github.com/ammitto/ammitto[Ammitto gem]; its source models are in
+https://github.com/ammitto/ammitto/tree/main/lib/ammitto/sources/ca[`lib/ammitto/sources/ca/`].
+Report data or source-list issues in
+https://github.com/ammitto/data-ca/issues[this repository].
 
 == License
 
 Data in this repository is sourced from official Canadian government
 publications and is subject to Canadian government licensing terms.
 The data processing code is part of the Ammitto project.
+
+== Related
+
+* https://www.ammitto.org[ammitto.org]: search across all sources
+* https://github.com/ammitto/ammitto[ammitto]: the Ruby gem that fetches and harmonizes this data
