@@ -4,3 +4,6 @@ entity_or_ship: PJSC RussNeft
 schedule: 1, Part 2
 item: '820'
 date_of_listing: '2026-02-19'
+aliases: |-
+  PJSC NK RussNeft, Russneft,
+  ПАО НК «РуссНефть», Русснефть
