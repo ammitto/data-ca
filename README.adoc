@@ -86,6 +86,52 @@ for path in sorted(glob.glob("processed/ca-*.yaml")):
 The same list, harmonized with the other sources into JSON-LD:
 https://www.ammitto.org/api/v1/sources/ca.jsonld
 
+== Harmonized field mapping
+
+The https://github.com/ammitto/ammitto/blob/main/lib/ammitto/sources/ca/transformer.rb[ca transformer]
+maps the processed source fields below to canonical Ruby attributes.
+Entity classes are in `Ammitto::Ontology::Entities`, entry/regime classes in
+`Ammitto::Ontology::Sanction`, and nested values in
+`Ammitto::Ontology::ValueObjects`. JSON-LD serialization can use different keys.
+
+[cols="2,2,4",options="header"]
+|===
+| Source fields | Canonical target | Transformation
+
+| `country`, `schedule`, `item`
+| `Entity.id`, `SanctionEntry.id`, `entity_id`, `reference_number`
+| Join the source fields into a sanitized local reference, then build source-scoped IDs.
+
+| `given_name`, `last_name`, `entity_or_ship`, `ship_imo_number`
+| Concrete entity class
+| Personal names select `PersonEntity`; otherwise a recognized IMO selects `VesselEntity`, with `OrganizationEntity` as fallback.
+
+| `given_name`, `last_name`, `entity_or_ship`, `aliases`
+| `Entity.names` (`NameVariant`)
+| Build a primary name from personal names or the entity/ship name; split aliases on semicolons and deduplicate them.
+
+| `date_of_birth_or_ship_build_date`
+| `PersonEntity.birth_info` (`BirthInfo`) or `VesselEntity.build_year`
+| Preserve readable birth dates/years and circa; alternative dates joined by "or" remain in source YAML. A vessel build year requires four digits.
+
+| `ship_imo_number`, `title_or_ship_type`
+| `VesselEntity.imo_number`, `vessel_type`; `PersonEntity.title`
+| Read the IMO and use the English part of the bilingual title/type value.
+
+| `country`
+| `SanctionEntry.regime` (`SanctionRegime`)
+| Apply the configured programme lookup or use a `CA_` code derived from the source text.
+
+| `schedule`, `item`, `date_of_listing`
+| `Entity.remarks`, `SanctionEntry.remarks`, `raw_source_detail.source_specific_fields`
+| Listing date remains in entity remarks and `ca:date_of_listing` metadata; the transformer does not create a period from it.
+
+| Source-wide transformer defaults
+| `SanctionEntry.status`, `effects` (`SanctionEffect`)
+| Set active status and a full-scope asset-freeze effect.
+
+|===
+
 == Updates
 
 The `Fetch Data` workflow (`.github/workflows/fetch.yml`) downloads the list
